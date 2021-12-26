@@ -6,6 +6,7 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 
 contract ChordusArena is ERC721Enumerable, Ownable{
   using Strings for uint256;
+  uint public last_completed_migration;
 
   string public baseURI;
   string public baseExtension = ".json";
@@ -25,6 +26,18 @@ contract ChordusArena is ERC721Enumerable, Ownable{
     string memory _initBaseURI
   ) ERC721(_name, _symbol) {
     setBaseURI(_initBaseURI);
+  }
+
+  modifier restricted() {
+    require(
+      msg.sender == owner(),
+      "This function is restricted to the contract's owner"
+    );
+    _;
+  }
+
+  function setCompleted(uint completed) public restricted {
+    last_completed_migration = completed;
   }
 
   function setBaseURI(string memory _newBaseURI) public onlyOwner {
